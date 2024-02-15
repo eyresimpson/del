@@ -14,6 +14,9 @@ func main() {
 		service.GetHelp()
 		return
 	}
+	// 系统初始化
+	service.InitRootWorkSpace(service.GetConfigPath())
+
 	if !strings.HasPrefix(os.Args[1], "-") {
 		service.Run("", os.Args[1:])
 		return
@@ -25,6 +28,8 @@ func main() {
 		service.GetHelp()
 	case "-l":
 		service.ListAllDeleted()
+	case "-c":
+		service.CleanAllDeleted()
 	default:
 		service.Run(os.Args[1], os.Args[2:])
 	}

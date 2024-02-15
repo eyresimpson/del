@@ -62,14 +62,41 @@ func ReadJsonArray(filePath string) []map[string]string {
 	return data
 }
 
-// 写入Json数组
-func WriteJsonArray(filePath string, newData map[string]string) {
+// 向Json数组中插入对象
+func InsertObjectToJsonArray(filePath string, newData map[string]string) {
 	data := ReadJsonArray(filePath)
 
 	// 追加新的对象
 	data = append(data, newData)
 
-	// println(data[0])
+	// 将修改后的JSON数据重新编码为JSON格式
+	encodedData, err := json.MarshalIndent(data, "", "    ")
+	if err != nil {
+		Err("Error encoding JSON:", err)
+		return
+	}
+
+	// 将修改后的JSON数据写回到文件中
+	if err := ioutil.WriteFile(filePath, encodedData, 0644); err != nil {
+		Err("Error writing to file:", err)
+		return
+	}
+
+}
+
+// 从Json数组中删除对象
+func RemoveObjectFromJsonArray(filePath string, id string) {
+
+	data := ReadJsonArray(filePath)
+
+	for i := 0; i < len(data); {
+		if data[i]["id"] == id {
+			// 使用切片操作删除符合条件的元素
+			data = append(data[:i], data[i+1:]...)
+		} else {
+			i++
+		}
+	}
 
 	// 将修改后的JSON数据重新编码为JSON格式
 	encodedData, err := json.MarshalIndent(data, "", "    ")
