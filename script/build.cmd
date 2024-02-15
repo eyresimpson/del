@@ -1,1 +1,0 @@
-go build -ldflags="-H windowsgui" -o ../dist/test.exe ../main.go
