@@ -3,9 +3,6 @@ package service
 import (
 	"del/tools"
 	"os"
-	"os/user"
-	"strings"
-	"time"
 )
 
 // 获取版本
@@ -29,24 +26,45 @@ func GetHelp() {
 
 // 功能检查
 func Run(arg string, files []string) {
-	u, _ := user.Current()
-	// 当前用户目录
-	dumpster := u.HomeDir + "/.dumpster"
-	// 当前工作目录
-	path, _ := os.Executable()
-	// 检查用户根目录下是否有 .dumpster 目录
-	if !tools.IsDirExist(dumpster) {
-		os.MkdirAll(dumpster, 0755)
-	}
+	// 当前暂存目录
+	dumpster := tools.GetCurrentUserRootDirectory() + "/.dumpster"
 
-	dumpster += "/" + time.Now().Format("2006-01-02:11-11-11-000")
+	// 当前暂存目录配置文件
+	dumpsterConf := dumpster + "/" + "registration.rec"
+
+	// 系统初始化
+	InitRootWorkSpace(dumpsterConf)
+
+	// 循环用户输入的路径
 	for _, file := range files {
 		// 将相对路径转为绝对路径
-		if !strings.HasPrefix(file, "/") {
-			file = path + "/" + file
+		file = tools.RelativePathToAbsolutePath(file)
+
+		// 重新拼接暂存文件夹
+		dumpster_file := dumpster + "/" + tools.GetTime()
+
+		// 重命名/移动文件/文件夹
+		err := os.Rename(file, dumpster_file)
+		// 检查错误
+		if err != nil {
+			tools.Err("Error: Unable to delete file, check permissions and file status !", err)
 		}
-		println("file --> ", file, dumpster)
-		os.MkdirAll(file, 0755)
-		os.Rename(file, dumpster)
 	}
+}
+
+// 初始化运行空间
+// 用于初始化暂存目录和记述文件
+func InitRootWorkSpace(dumpsterConf string) {
+	// 当前用户目录
+	dumpster := tools.GetCurrentUserRootDirectory() + "/.dumpster"
+	if !tools.IsFileExist(dumpsterConf) {
+		os.MkdirAll(dumpster, 0755)
+		os.Create(dumpsterConf)
+	}
+
+}
+
+// 获取配置文件
+func GetWorkSpaceConf() {
+
 }

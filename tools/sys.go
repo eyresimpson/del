@@ -2,7 +2,10 @@ package tools
 
 import (
 	"bytes"
+	"os"
 	"os/exec"
+	"os/user"
+	"path/filepath"
 )
 
 func RunExe(exe string, args ...string) error {
@@ -26,4 +29,16 @@ func Run(command string, args ...string) string {
 	} else {
 		return outStr
 	}
+}
+
+// 获取当前运行目录
+func GetCurrentDirectory() string {
+	rawPath, _ := os.Executable()
+	return filepath.Dir(rawPath)
+}
+
+// 获取用户根目录
+func GetCurrentUserRootDirectory() string {
+	u, _ := user.Current()
+	return u.HomeDir
 }
