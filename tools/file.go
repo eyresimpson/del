@@ -1,7 +1,11 @@
 package tools
 
-import "os"
+import (
+	"io/ioutil"
+	"os"
+)
 
+// 判断文件夹是否存在
 func IsDirExist(path string) bool {
 	_, err := os.Stat(path)
 	if err == nil {
@@ -13,13 +17,14 @@ func IsDirExist(path string) bool {
 	return false
 }
 
+// 判断文件是否存在
 func IsFileExist(path string) bool {
 	_, err := os.Stat(path)
-	if err == nil {
-		return false
-	}
-	if os.IsNotExist(err) {
-		return false
+	if err != nil {
+		if os.IsNotExist(err) {
+			return false
+		}
+		return true
 	}
 	return true
 }
@@ -38,6 +43,10 @@ func IsFile(path string) bool {
 	return !IsDir(path)
 }
 
-func delete() {
-
+// 写文件
+func WriteFile(content string, filePath string) {
+	err := ioutil.WriteFile(filePath, []byte(content), 0644)
+	if err != nil {
+		Err("Error writing to file: ", err)
+	}
 }

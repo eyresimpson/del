@@ -16,12 +16,15 @@ func main() {
 	}
 	if !strings.HasPrefix(os.Args[1], "-") {
 		service.Run("", os.Args[1:])
+		return
 	}
 	switch os.Args[1] {
 	case "-v":
 		service.GetVersion()
 	case "-h":
 		service.GetHelp()
+	case "-l":
+		service.ListAllDeleted()
 	default:
 		service.Run(os.Args[1], os.Args[2:])
 	}
